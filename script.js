@@ -1,4 +1,4 @@
-const symbols = ['🍒', '🍋', '🍉', '⭐', '🍇']; // Define your symbols
+const symbols = ['🍒', '🍋', '🍉', '⭐', 'Paca']; // Define your symbols
 
 function spin() {
     const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];

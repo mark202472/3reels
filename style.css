@@ -82,7 +82,8 @@ th, td {
     background-color: #e0e0e0; /* Light grey background for reels */
 }
 .prizes {
-    margin-top: 20px;
+    margin-top: -500px;
+    margin-left: -300px;
 }
 
 table {

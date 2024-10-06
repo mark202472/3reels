@@ -236,4 +236,34 @@
         }
     </script>
 </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slot Machine Game with Music</title>
+</head>
+<body>
+    <!-- Background Music -->
+    <audio id="backgroundMusic" src="https://raw.githubusercontent.com/your-username/slot-machine-assets/main/background-music.mp3" autoplay loop>
+        Your browser does not support the audio element.
+    </audio>
+    
+    <!-- Game HTML -->
+    <div class="game-container">
+        <!-- Your slot machine code here -->
+    </div>
+
+    <script>
+        const music = document.getElementById("backgroundMusic");
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+            } else {
+                music.pause();
+            }
+        }
+    </script>
+</body>
 </html>
+

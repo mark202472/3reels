@@ -24,7 +24,7 @@ function spin() {
             case '🍋': prize = 20; break;
             case '🍉': prize = 50; break;
             case '⭐': prize = 100; break;
-            case '🍇': prize = 200; break;
+            case 'PACA': prize = 200; break;
         }
 
         // Display winnings in the table

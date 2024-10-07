@@ -64,3 +64,38 @@ function displayWinnings(winnings) {
         cell2.textContent = winning.prize; // Set the prize
     });
 }
+let clickCount = 0;
+const maxClicks = 50;
+const resetTime = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+let lastReset = localStorage.getItem('lastReset') ? parseInt(localStorage.getItem('lastReset')) : 0;
+function handleClick() {
+    const currentTime = Date.now();
+    
+    // Check if 12 hours have passed since the last reset
+    if (currentTime - lastReset >= resetTime) {
+        clickCount = 0; // Reset the counter
+        lastReset = currentTime; // Update the last reset time
+        localStorage.setItem('lastReset', lastReset);
+    }
+
+    // Check if the click count has reached the maximum
+    if (clickCount < maxClicks) {
+        clickCount++;
+        console.log(`Click count: ${clickCount}`);
+        // Update the UI or do something with the click here
+    } else {
+        console.log("You've reached the maximum click limit.");
+    }
+}
+document.getElementById('yourClickableElementId').addEventListener('click', handleClick);
+window.onload = function() {
+    const currentTime = Date.now();
+    
+    if (currentTime - lastReset >= resetTime) {
+        clickCount = 0; // Reset the counter
+        lastReset = currentTime; // Update the last reset time
+        localStorage.setItem('lastReset', lastReset);
+    } else {
+        clickCount = clickCount; // Retain the count if within the time limit
+    }
+};

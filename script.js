@@ -1,4 +1,9 @@
-const symbols = ['🍒', '🍋', '🍉', '⭐', 'Paca']; // Define your symbols
+const symbols = ['🍒', '🍋', '🍉', '⭐', '🍇']; // Define your symbols
+let totalCoins = 0; // Track total coins won
+let clickCount = 0;
+const maxClicks = 50;
+const resetTime = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+let lastReset = localStorage.getItem('lastReset') ? parseInt(localStorage.getItem('lastReset')) : 0;
 
 function spin() {
     const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
@@ -24,12 +29,14 @@ function spin() {
             case '🍋': prize = 20; break;
             case '🍉': prize = 50; break;
             case '⭐': prize = 100; break;
-            case 'PACA': prize = 200; break;
+            case '🍇': prize = 200; break;
         }
 
-        // Display winnings in the table
+        totalCoins += prize; // Add the prize to total coins
+        updateTotalCoinsDisplay(); // Update visual display of total coins
         console.log("Winning: ", { symbol: winningSymbol, prize: prize }); // Debugging line
         displayWinnings([{ symbol: winningSymbol, prize: prize }]);
+        document.getElementById('winSound').play(); // Play win sound if there's a win
     } else {
         console.log("No winnings this time!"); // Debugging line
     }
@@ -53,22 +60,15 @@ function displayWinnings(winnings) {
         cell2.textContent = winning.prize; // Set the prize
     });
 }
-function displayWinnings(winnings) {
-    const winningsTable = document.getElementById('winningsTable');
 
-    winnings.forEach(winning => {
-        const newRow = winningsTable.insertRow(); // Insert a new row
-        const cell1 = newRow.insertCell(0); // Create first cell for symbol
-        const cell2 = newRow.insertCell(1); // Create second cell for prize
-        cell1.textContent = winning.symbol; // Set the symbol
-        cell2.textContent = winning.prize; // Set the prize
-    });
+// Function to update the visual display of total coins
+function updateTotalCoinsDisplay() {
+    const totalCoinsDisplay = document.getElementById('totalCoinsDisplay');
+    totalCoinsDisplay.textContent = `Total Coins Won: ${totalCoins}`;
 }
-let clickCount = 0;
-const maxClicks = 50;
-const resetTime = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
-let lastReset = localStorage.getItem('lastReset') ? parseInt(localStorage.getItem('lastReset')) : 0;
-function handleClick() {
+
+// Sound and click limit handling
+function resetClickCountIfNeeded() {
     const currentTime = Date.now();
     
     // Check if 12 hours have passed since the last reset
@@ -76,26 +76,40 @@ function handleClick() {
         clickCount = 0; // Reset the counter
         lastReset = currentTime; // Update the last reset time
         localStorage.setItem('lastReset', lastReset);
+        totalCoins = 0; // Reset the total coins won
+        updateTotalCoinsDisplay(); // Reset the visual display of total coins
     }
+}
+
+function handleClick() {
+    resetClickCountIfNeeded(); // Ensure click count is reset if needed
 
     // Check if the click count has reached the maximum
     if (clickCount < maxClicks) {
         clickCount++;
         console.log(`Click count: ${clickCount}`);
-        // Update the UI or do something with the click here
+        document.getElementById('spinSound').play(); // Play spin sound
+        spin(); // Execute spin logic
     } else {
+        // Display total coins won if max clicks reached
+        displayTotalCoins();
         console.log("You've reached the maximum click limit.");
+        // Optionally, update UI to inform the user
     }
 }
+
+// Function to display total coins won after 50 clicks
+function displayTotalCoins() {
+    // Visually display the total coins
+    const totalCoinsDisplay = document.getElementById('totalCoinsDisplay');
+    totalCoinsDisplay.textContent = `Total Coins Won: ${totalCoins}`;
+
+    console.log(`Total coins won: ${totalCoins}`);
+    alert(`You've reached the maximum click limit. Total coins won: ${totalCoins}`);
+}
+
 document.getElementById('yourClickableElementId').addEventListener('click', handleClick);
+
 window.onload = function() {
-    const currentTime = Date.now();
-    
-    if (currentTime - lastReset >= resetTime) {
-        clickCount = 0; // Reset the counter
-        lastReset = currentTime; // Update the last reset time
-        localStorage.setItem('lastReset', lastReset);
-    } else {
-        clickCount = clickCount; // Retain the count if within the time limit
-    }
+    resetClickCountIfNeeded(); // Ensure click count is reset on load
 };

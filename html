@@ -1,239 +1,115 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slot Machine Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+const symbols = ['🍒', '🍋', '🍉', '⭐', '🍇']; // Define your symbols
+let totalCoins = 0; // Track total coins won
+let clickCount = 0;
+const maxClicks = 50;
+const resetTime = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+let lastReset = localStorage.getItem('lastReset') ? parseInt(localStorage.getItem('lastReset')) : 0;
+
+function spin() {
+    const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
+    const results = []; // Array to store results
+
+    reels.forEach(reel => {
+        const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+        reel.textContent = randomSymbol; // Set random symbol
+        results.push(randomSymbol); // Store the result
+        reel.style.animation = 'spin 0.5s'; // Set animation
+    });
+
+    console.log("Results: ", results); // Debugging line
+
+    // Check for winnings
+    if (results[0] === results[1] && results[1] === results[2]) {
+        const winningSymbol = results[0];
+        let prize = 0;
+
+        // Determine prize based on the symbol
+        switch (winningSymbol) {
+            case '🍒': prize = 10; break;
+            case '🍋': prize = 20; break;
+            case '🍉': prize = 50; break;
+            case '⭐': prize = 100; break;
+            case '🍇': prize = 200; break;
         }
-        .symbols-table {
-            margin-bottom: 20px;
-            text-align: center;
-            width: 200px;
-            border-collapse: collapse;
-        }
-        .symbols-table th, .symbols-table td {
-            padding: 10px;
-            border: 1px solid #000;
-            background-color: #ffffff;
-        }
-        .game-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .slot-machine {
-            display: flex;
-            align-items: center;
-            margin: 100px 0;
-        }
-        .reel {
-            width: 100px;
-            height: 100px;
-            margin: 0 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            border: 4px solid #000; /* Increased border width */
-            background-color: #f4f4f4;
-        }
-        .spin-button {
-            margin-left: 10px;
-            padding: 10px 15px;
-            font-size: 1em;
-            cursor: pointer;
-        }
-        .win-box {
-            padding: 10px;
-            border: 2px solid #000;
-            text-align: center;
-            width: 200px;
-            background-color: #f9f9f9;
-            font-size: 1.1em;
-            margin-top: 10px;
-        }
-        .win-history {
-            margin-top: 20px;
-            width: 300px;
-            border-collapse: collapse;
-        }
-        .win-history th, .win-history td {
-            padding: 10px;
-            border: 1px solid #000;
-            text-align: center;
-        }
-    </style>
+
+        totalCoins += prize; // Add the prize to total coins
+        updateTotalCoinsDisplay(); // Update visual display of total coins
+        console.log("Winning: ", { symbol: winningSymbol, prize: prize }); // Debugging line
+        displayWinnings([{ symbol: winningSymbol, prize: prize }]);
+        document.getElementById('winSound').play(); // Play win sound if there's a win
+    } else {
+        console.log("No winnings this time!"); // Debugging line
+    }
+
+    // Reset animation after it finishes
+    setTimeout(() => {
+        reels.forEach(reel => {
+            reel.style.animation = 'none'; // Reset the animation
+        });
+    }, 500); // Match this with the duration of the spin
+}
+
+function displayWinnings(winnings) {
+    const winningsTable = document.getElementById('winningsTable');
+
+    winnings.forEach(winning => {
+        const newRow = winningsTable.insertRow(); // Insert a new row
+        const cell1 = newRow.insertCell(0); // Create first cell for symbol
+        const cell2 = newRow.insertCell(1); // Create second cell for prize
+        cell1.textContent = winning.symbol; // Set the symbol
+        cell2.textContent = winning.prize; // Set the prize
+    });
+}
+
+// Function to update the visual display of total coins
+function updateTotalCoinsDisplay() {
+    const totalCoinsDisplay = document.getElementById('totalCoinsDisplay');
+    totalCoinsDisplay.textContent = `Total Coins Won: ${totalCoins}`;
+}
+
+// Sound and click limit handling
+function resetClickCountIfNeeded() {
+    const currentTime = Date.now();
     
-</head>
-<body>
-    <!-- Symbols Table -->
-    <table class="symbols-table">
-        <tr>
-            <th>Symbol</th>
-            <th>Prize</th>
-        </tr>
-        <tr>
-            <td>🍒 Cherry</td>
-            <td>10 Coins</td>
-        </tr>
-        <tr>
-            <td>🍋 Lemmon</td>
-            <td>20 Coins</td>
-        </tr>
-        <tr>
-            <td>🍉 Watermelon</td>
-            <td>50 Coins</td>
-        </tr>
-        <tr>
-            <td>⭐ Star</td>
-            <td>100 Coins</td>
-        </tr>
-        <tr>
-            <td>🍇 Grape</td>
-            <td>200 Coins</td>
-        </tr>
-    </table>
+    // Check if 12 hours have passed since the last reset
+    if (currentTime - lastReset >= resetTime) {
+        clickCount = 0; // Reset the counter
+        lastReset = currentTime; // Update the last reset time
+        localStorage.setItem('lastReset', lastReset);
+        totalCoins = 0; // Reset the total coins won
+        updateTotalCoinsDisplay(); // Reset the visual display of total coins
+    }
+}
 
-    <!-- Game Container -->
-    <div class="game-container">
-        <!-- Slot Machine -->
-        <div class="slot-machine">
-            <div class="reel" id="reel1">⭐</div>
-            <div class="reel" id="reel2">🍋</div>
-            <div class="reel" id="reel3">⭐</div>
-            <button class="spin-button" onclick="spin()">Spin</button>
-        </div>
+function handleClick() {
+    resetClickCountIfNeeded(); // Ensure click count is reset if needed
 
-        <!-- Win Box -->
-        <div class="win-box" id="winBox">
-            <strong>Your Win:</strong> <span id="winMessage">No Win</span>
-        </div>
+    // Check if the click count has reached the maximum
+    if (clickCount < maxClicks) {
+        clickCount++;
+        console.log(`Click count: ${clickCount}`);
+        document.getElementById('spinSound').play(); // Play spin sound
+        spin(); // Execute spin logic
+    } else {
+        // Display total coins won if max clicks reached
+        displayTotalCoins();
+        console.log("You've reached the maximum click limit.");
+        // Optionally, update UI to inform the user
+    }
+}
 
-        <!-- Win History Table -->
-        <table class="win-history" id="winHistoryTable">
-            <thead>
-                <tr>
-                    <th>Symbol</th>
-                    <th>Prize</th>
-                </tr>
-            </thead>
-            <tbody id="winHistoryBody">
-                <!-- Win history entries will be inserted here -->
-            </tbody>
-        </table>
-    </div>
+// Function to display total coins won after 50 clicks
+function displayTotalCoins() {
+    // Visually display the total coins
+    const totalCoinsDisplay = document.getElementById('totalCoinsDisplay');
+    totalCoinsDisplay.textContent = `Total Coins Won: ${totalCoins}`;
 
-    <script>
-        // Win history array
-        const winHistory = [];
+    console.log(`Total coins won: ${totalCoins}`);
+    alert(`You've reached the maximum click limit. Total coins won: ${totalCoins}`);
+}
 
-        function spin() {
-            const symbols = ["🍒", "PACA", "🍉", "⭐", "🍇"];
-            const reel1Symbol = symbols[Math.floor(Math.random() * symbols.length)];
-            const reel2Symbol = symbols[Math.floor(Math.random() * symbols.length)];
-            const reel3Symbol = symbols[Math.floor(Math.random() * symbols.length)];
-            
-            document.getElementById("reel1").textContent = reel1Symbol;
-            document.getElementById("reel2").textContent = reel2Symbol;
-            document.getElementById("reel3").textContent = reel3Symbol;
+document.getElementById('yourClickableElementId').addEventListener('click', handleClick);
 
-            let winMessage = document.getElementById("winMessage");
-            let prize = 0;
-            
-            if (reel1Symbol === reel2Symbol && reel2Symbol === reel3Symbol) {
-                switch(reel1Symbol) {
-                    case '🍒':
-                        prize = 10;
-                        break;
-                    case '🍋':
-                        prize = 20;
-                        break;
-                    case '🍉':
-                        prize = 50;
-                        break;
-                    case '⭐':
-                        prize = 100;
-                        break;
-                    case '🍇':
-                        prize = 200;
-                        break;
-                }
-                
-                winMessage.textContent = `${reel1Symbol} - ${prize} Coins`;
-                
-                // Add win to history
-                winHistory.push({ symbol: reel1Symbol, prize: prize });
-                updateWinHistory();
-            } else {
-                winMessage.textContent = 'No Win';
-            }
-        }
-
-        // Function to update win history table
-        function updateWinHistory() {
-            const winHistoryBody = document.getElementById("winHistoryBody");
-            winHistoryBody.innerHTML = ""; // Clear current history
-            
-            winHistory.forEach((win) => {
-                const row = document.createElement("tr");
-                const symbolCell = document.createElement("td");
-                symbolCell.textContent = win.symbol;
-                const prizeCell = document.createElement("td");
-                prizeCell.textContent = `${win.prize} Coins`;
-                
-                row.appendChild(symbolCell);
-                row.appendChild(prizeCell);
-                winHistoryBody.appendChild(row);
-            });
-        }
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slot Machine Game with Music</title>
-    <style>
-        /* Add your styles here */
-    </style>
-</head>
-<body>
-    <!-- Background Music -->
-    <audio id="backgroundMusic" src="https://example.com/your-music-file.mp3" autoplay loop>
-        Your browser does not support the audio element.
-    </audio>
-    
-    <!-- Game HTML -->
-    <div class="game-container">
-        <!-- Your slot machine code here -->
-    </div>
-
-    <script>
-        // Optionally control music with JavaScript
-        const music = document.getElementById("backgroundMusic");
-        // Uncomment the line below to pause the music initially
-        // music.pause();
-        
-        // You could add a play/pause button for the user to control music
-        function toggleMusic() {
-            if (music.paused) {
-                music.play();
-            } else {
-                music.pause();
-            }
-        }
-    </script>
-</body>
-</html>
+window.onload = function() {
+    resetClickCountIfNeeded(); // Ensure click count is reset on load
+};

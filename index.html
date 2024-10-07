@@ -44,7 +44,7 @@
             align-items: center;
             justify-content: center;
             font-size: 2em;
-            border: 4px solid #000; /* Increased border width */
+            border: 4px solid #000;
             background-color: #f4f4f4;
         }
         .spin-button {
@@ -73,9 +73,13 @@
             text-align: center;
         }
     </style>
-    
 </head>
 <body>
+    <!-- Background Music -->
+    <audio id="backgroundMusic" src="httpsraw.githubusercontent.comyour-usernameslot-machine-assetsmainbackground-music.mp3.mp4" autoplay loop>
+        Your browser does not support the audio element.
+    </audio>
+    
     <!-- Symbols Table -->
     <table class="symbols-table">
         <tr>
@@ -87,7 +91,7 @@
             <td>10 Coins</td>
         </tr>
         <tr>
-            <td>🍋 Lemmon</td>
+            <td>🍋 Lemon</td>
             <td>20 Coins</td>
         </tr>
         <tr>
@@ -99,7 +103,7 @@
             <td>100 Coins</td>
         </tr>
         <tr>
-            <td>PACA </td>
+            <td>Paca Grape</td>
             <td>200 Coins</td>
         </tr>
     </table>
@@ -131,11 +135,22 @@
                 <!-- Win history entries will be inserted here -->
             </tbody>
         </table>
+
+        <!-- Total Coins Display -->
+        <div id="totalCoinsDisplay">Total Coins Won: 0</div>
+
+        <!-- Click Counter -->
+        <p id="clickCountDisplay">Clicks: 0</p>
     </div>
 
     <script>
-        // Win history array
+        // Win history array and total coins tracker
         const winHistory = [];
+        let totalCoins = 0;
+        let clickCount = 0;
+        const maxClicks = 50;
+        const resetTime = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+        let lastReset = localStorage.getItem('lastReset') ? parseInt(localStorage.getItem('lastReset')) : 0;
 
         function spin() {
             const symbols = ["🍒", "🍋", "🍉", "⭐", "Paca"];
@@ -169,6 +184,9 @@
                         break;
                 }
                 
+                totalCoins += prize;
+                updateTotalCoinsDisplay();
+
                 winMessage.textContent = `${reel1Symbol} - ${prize} Coins`;
                 
                 // Add win to history
@@ -177,6 +195,33 @@
             } else {
                 winMessage.textContent = 'No Win';
             }
+
+            // Increment click counter
+            handleClick();
+        }
+
+        function handleClick() {
+            const currentTime = Date.now();
+
+            // Check if 12 hours have passed since the last reset
+            if (currentTime - lastReset >= resetTime) {
+                clickCount = 0; // Reset the counter
+                lastReset = currentTime; // Update the last reset time
+                localStorage.setItem('lastReset', lastReset);
+            }
+
+            // Check if the click count has reached the maximum
+            if (clickCount < maxClicks) {
+                clickCount++;
+                document.getElementById("clickCountDisplay").textContent = `Clicks: ${clickCount}`;
+            } else {
+                alert(`You've reached the maximum click limit. Total coins won: ${totalCoins}`);
+            }
+        }
+
+        // Function to update total coins display
+        function updateTotalCoinsDisplay() {
+            document.getElementById("totalCoinsDisplay").textContent = `Total Coins Won: ${totalCoins}`;
         }
 
         // Function to update win history table
@@ -196,75 +241,17 @@
                 winHistoryBody.appendChild(row);
             });
         }
+
+        // On page load, check for the reset condition
+        window.onload = function() {
+            const currentTime = Date.now();
+            
+            if (currentTime - lastReset >= resetTime) {
+                clickCount = 0; // Reset the counter
+                lastReset = currentTime; // Update the last reset time
+                localStorage.setItem('lastReset', lastReset);
+            }
+        };
     </script>
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slot Machine Game with Music</title>
-    <style>
-        /* Add your styles here */
-    </style>
-</head>
-<body>
-    <!-- Background Music -->
-    <audio id="backgroundMusic" src="https://raw.githubusercontent.com/your-username/slot-machine-assets/main/background-music.mp3
-" autoplay loop>
-        Your browser does not support the audio element.
-    </audio>
-    
-    <!-- Game HTML -->
-    <div class="game-container">
-        <!-- Your slot machine code here -->
-    </div>
-
-    <script>
-        // Optionally control music with JavaScript
-        const music = document.getElementById("backgroundMusic");
-        // Uncomment the line below to pause the music initially
-        // music.pause();
-        
-        // You could add a play/pause button for the user to control music
-        function toggleMusic() {
-            if (music.paused) {
-                music.play();
-            } else {
-                music.pause();
-            }
-        }
-    </script>
-</body>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slot Machine Game with Music</title>
-</head>
-<body>
-    <!-- Background Music -->
-    <audio id="backgroundMusic" src="https://raw.githubusercontent.com/your-username/slot-machine-assets/main/background-music.mp3" autoplay loop>
-        Your browser does not support the audio element.
-    </audio>
-    
-    <!-- Game HTML -->
-    <div class="game-container">
-        <!-- Your slot machine code here -->
-    </div>
-
-    <script>
-        const music = document.getElementById("backgroundMusic");
-        function toggleMusic() {
-            if (music.paused) {
-                music.play();
-            } else {
-                music.pause();
-            }
-        }
-    </script>
-</body>
-</html>
-

@@ -1,4 +1,5 @@
-const symbols = ['🍒', '🍋', '🍉', '⭐', '🍇']; // Define your symbols
+const symbols = ["🍒", "🍋", "🍉", "⭐", "🦙"]; // Already includes "Paca"
+
 let totalCoins = 0; // Track total coins won
 let clickCount = 0;
 const maxClicks = 50;
@@ -29,7 +30,7 @@ function spin() {
             case '🍋': prize = 20; break;
             case '🍉': prize = 50; break;
             case '⭐': prize = 100; break;
-            case '🍇': prize = 200; break;
+            case '🦙': prize = 500; break;
         }
 
         totalCoins += prize; // Add the prize to total coins
@@ -113,3 +114,65 @@ document.getElementById('yourClickableElementId').addEventListener('click', hand
 window.onload = function() {
     resetClickCountIfNeeded(); // Ensure click count is reset on load
 };
+function handleClick() {
+    const currentTime = Date.now();
+
+    // Check if 12 hours have passed since the last reset
+    if (currentTime - lastReset >= resetTime) {
+        clickCount = 0; // Reset the counter
+        lastReset = currentTime; // Update the last reset time
+        localStorage.setItem('lastReset', lastReset);
+    }
+
+    function handleClick() {
+        const currentTime = Date.now();
+    
+        // Check if 12 hours have passed since the last reset
+        if (currentTime - lastReset >= resetTime) {
+            clickCount = 0; // Reset the counter
+            lastReset = currentTime; // Update the last reset time
+            localStorage.setItem('lastReset', lastReset);
+        }
+    
+        // Check if the click count has reached the maximum
+        if (clickCount < maxClicks) {
+            clickCount++;
+            document.getElementById("clickCountDisplay").textContent = `Clicks: ${clickCount}`;
+        } else {
+            // Display the message in the HTML
+            const messageDiv = document.getElementById("maxClickMessage");
+            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`;
+    
+            alert(`You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`);
+            document.querySelector('.spin-button').disabled = true; // Disable the spin button after max clicks
+        }
+    }
+    function handleClick() {
+        const currentTime = Date.now();
+    
+        // Check if 12 hours have passed since the last reset
+        if (currentTime - lastReset >= resetTime) {
+            clickCount = 0; // Reset the counter
+            lastReset = currentTime; // Update the last reset time
+            localStorage.setItem('lastReset', lastReset);
+        }
+    
+        // Check if the click count has reached the maximum
+        if (clickCount < maxClicks) {
+            clickCount++;
+            document.getElementById("clickCountDisplay").textContent = `Clicks: ${clickCount}`;
+        } else {
+            // Set the message in HTML
+            const messageDiv = document.getElementById("maxClickMessage");
+            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`;
+    
+            // Show the alert
+            alert(`You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`);
+    
+            // Optionally disable the spin button
+            document.querySelector('.spin-button').disabled = true;
+        }
+    }
+    
+    
+}

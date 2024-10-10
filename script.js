@@ -116,7 +116,6 @@ document.addEventListener('keydown', function (e) {
 window.addEventListener('beforeunload', function (e) {
     e.preventDefault();
     e.returnValue = ''; // Chrome requires returnValue to be set to show a confirmation dialog
-    alert("Refreshing the page is disabled. Please don't refresh.");
 });
 
 // Disable right-click context menu (which can have a refresh option)

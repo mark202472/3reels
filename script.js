@@ -176,3 +176,57 @@ function handleClick() {
     
     
 }
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault(); // Prevents the default action of refreshing the page
+    e.returnValue = ''; // Display a prompt to the user
+});
+function goFullscreen() {
+    const element = document.documentElement; // Target the entire document
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) { // Firefox
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) { // Chrome, Safari, and Opera
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) { // IE/Edge
+        element.msRequestFullscreen();
+    }
+}
+
+// Call this function when the user starts the game
+goFullscreen();
+document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && (e.key === 'r' || e.key === 'R')) { // Ctrl + R
+        e.preventDefault(); // Prevents the refresh
+    }
+    if (e.key === 'F5') { // F5 key
+        e.preventDefault(); // Prevents the refresh
+    }
+});
+function handleClick() {
+    const currentTime = Date.now();
+
+    // Check if 12 hours have passed since the last reset
+    if (currentTime - lastReset >= resetTime) {
+        clickCount = 0; // Reset the counter
+        lastReset = currentTime; // Update the last reset time
+        localStorage.setItem('lastReset', lastReset);
+    }
+
+    // Check if the click count has reached the maximum
+    if (clickCount < maxClicks) {
+        clickCount++;
+        document.getElementById("clickCountDisplay").textContent = `Clicks: ${clickCount}`;
+    } else {
+        // Disable spin button only if total coins are greater than 0
+        if (totalCoins > 0) {
+            document.getElementById("spinButton").disabled = true;
+            // Set the message in HTML
+            const messageDiv = document.getElementById("maxClickMessage");
+            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`;
+        } else {
+            // Allow refresh if total coins are 0
+            document.getElementById("maxClickMessage").textContent = "You can refresh the page since you have no coins.";
+        }
+    }
+}

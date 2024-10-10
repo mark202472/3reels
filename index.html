@@ -79,7 +79,7 @@
 </head>
 <body>
     <!-- Background Music -->
-    <audio id="backgroundMusic" src="https://your-usernameslot-machine-assetsmainbackground-music.mp3.mp4" autoplay loop>
+    <audio id="backgroundMusic" src="https://www.soundjay.com/button/sounds/button-1.mp3" autoplay loop>
         Your browser does not support the audio element.
     </audio>
     
@@ -211,20 +211,17 @@
                     }
                     
                     totalCoins += prize;
-                    updateTotalCoinsDisplay();
-
-                    winMessage.textContent = `${reel1Symbol} - ${prize} Coins`;
-                    
-                    // Add win to history
+                    winMessage.textContent = `You won ${prize} Coins!`;
                     winHistory.push({ symbol: reel1Symbol, prize: prize });
+                    updateTotalCoinsDisplay();
                     updateWinHistory();
                 } else {
                     winMessage.textContent = 'No Win';
                 }
-                
-                // Increment click counter and check if max clicks reached
+
+                // Call handleClick to check click count
                 handleClick();
-            }, 500); // Wait for animation to finish before showing the result
+            }, 1000); // Wait for 1 second before showing the results
         }
 
         function handleClick() {
@@ -242,12 +239,16 @@
                 clickCount++;
                 document.getElementById("clickCountDisplay").textContent = `Clicks: ${clickCount}`;
             } else {
-                // Disable spin button
-                document.getElementById("spinButton").disabled = true;
-                
-                // Set the message in HTML
-                const messageDiv = document.getElementById("maxClickMessage");
-                messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`;
+                // Disable spin button only if total coins are greater than 0
+                if (totalCoins > 0) {
+                    document.getElementById("spinButton").disabled = true;
+                    // Set the message in HTML
+                    const messageDiv = document.getElementById("maxClickMessage");
+                    messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`;
+                } else {
+                    // Allow refresh if total coins are 0
+                    document.getElementById("maxClickMessage").textContent = "You can refresh the page since you have no coins.";
+                }
             }
         }
 
@@ -271,6 +272,28 @@
                 winHistoryBody.appendChild(row);
             });
         }
+
+        // Prevent page refresh
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault();
+            e.returnValue = ''; // Display a prompt
+        });
+
+        function goFullscreen() {
+            const element = document.documentElement;
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        }
+
+        // Call this function when the user starts the game
+        document.getElementById("spinButton").addEventListener('click', goFullscreen);
     </script>
 </body>
 </html>

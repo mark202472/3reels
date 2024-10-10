@@ -95,7 +95,7 @@ function handleClick() {
             messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to Mark on Telegram: @Markuk2021`;
             alert(`You've reached the maximum click limit. Please take a screenshot and send to Mark on Telegram: @Markuk2021`);
         } else {
-            document.getElementById("maxClickMessage").textContent = "You can refresh the page since you have no coins.";
+            document.getElementById("maxClickMessage").textContent = "You can refresh the page since you didnt  not win any coins.";
         }
     }
 }

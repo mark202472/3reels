@@ -81,8 +81,12 @@ button:hover {
 
 /* Make the table responsive */
 @media (max-width: 600px) {
-    th, td {
-        font-size: 14px; /* Smaller font size for smaller screens */
-        padding: 5px;    /* Less padding on smaller screens */
+    .symbols-table, .win-history {
+        width: 100%; /* Full width on small screens */
+    }
+    .reel {
+        width: 80px; /* Smaller width for reels */
+        height: 80px; /* Smaller height for reels */
+        font-size: 1.5em; /* Smaller font size */
     }
 }

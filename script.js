@@ -133,4 +133,25 @@ document.addEventListener('keydown', function (e) {
     if (e.key === 'F5') { 
         e.preventDefault(); 
     }
+    // Prevent keyboard-based refresh (F5, Ctrl+R, Cmd+R)
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'F5' || (e.ctrlKey && e.key === 'r') || (e.metaKey && e.key === 'r')) {
+        e.preventDefault(); // Prevent the default refresh behavior
+        alert("Refreshing the page is disabled.");
+    }
+});
+
+// Warn users if they try to refresh or leave the page manually
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault();
+    e.returnValue = ''; // Chrome requires returnValue to be set to show a confirmation dialog
+    alert("Refreshing the page is disabled. Please don't refresh.");
+});
+
+// Disable right-click context menu (which can have a refresh option)
+document.addEventListener('contextmenu', function (e) {
+    e.preventDefault(); // Prevent the right-click menu from opening
+    alert("Right-click is disabled. Please don't try to refresh.");
+});
+
 });

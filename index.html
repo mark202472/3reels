@@ -6,6 +6,7 @@
     <title>Slot Machine Game</title>
     <style>
         body {
+            background-color: #f0f0f0; /* Light gray background */
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
@@ -13,31 +14,33 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-image: url('background.jpg'); /* Ensure this is the correct image file name */
-            background-size: cover; /* Adjusts the image to cover the entire body */
-            background-position: center; /* Centers the image */
         }
+
         .symbols-table {
             margin-bottom: 20px;
             text-align: center;
             width: 200px;
             border-collapse: collapse;
         }
+
         .symbols-table th, .symbols-table td {
             padding: 10px;
             border: 1px solid #000;
             background-color: #ffffff;
         }
+
         .game-container {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         .slot-machine {
             display: flex;
             align-items: center;
             margin: 100px 0;
         }
+
         .reel {
             width: 100px;
             height: 100px;
@@ -48,14 +51,16 @@
             font-size: 2em;
             border: 4px solid #000;
             background-color: #f4f4f4;
-            transition: transform 0.5s ease; /* Animation for spinning */
+            transition: transform 0.5s ease;
         }
+
         .spin-button {
             margin-left: 10px;
             padding: 10px 15px;
             font-size: 1em;
             cursor: pointer;
         }
+
         .win-box {
             padding: 10px;
             border: 2px solid #000;
@@ -65,15 +70,24 @@
             font-size: 1.1em;
             margin-top: 10px;
         }
+
         .win-history {
             margin-top: 20px;
             width: 300px;
             border-collapse: collapse;
         }
+
         .win-history th, .win-history td {
             padding: 10px;
             border: 1px solid #000;
             text-align: center;
+        }
+
+        footer img.logo {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 100px; /* Adjust size as needed */
         }
     </style>
 </head>
@@ -82,7 +96,7 @@
     <audio id="backgroundMusic" src="https://www.soundjay.com/button/sounds/button-1.mp3" autoplay loop>
         Your browser does not support the audio element.
     </audio>
-    
+
     <!-- Symbols Table -->
     <table class="symbols-table">
         <tr>
@@ -157,22 +171,24 @@
         <div id="maxClickMessage" style="color: red; font-weight: bold;"></div>
     </div>
 
+    <footer>
+        <img src="images/paca_logo.jpg" alt="Paca Logo" class="logo"> <!-- Ensure the correct logo path -->
+    </footer>
+
     <script>
         // Win history array and total coins tracker
         const winHistory = [];
         let totalCoins = 0;
         let clickCount = 0;
         const maxClicks = 50;
-        const resetTime = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
-        let lastReset = localStorage.getItem('lastReset') ? parseInt(localStorage.getItem('lastReset')) : 0;
 
         function spin() {
             const symbols = ["🍒", "🍋", "🍉", "⭐", "🍀", "💰", "🦙"];
             const reel1Symbol = symbols[Math.floor(Math.random() * symbols.length)];
             const reel2Symbol = symbols[Math.floor(Math.random() * symbols.length)];
             const reel3Symbol = symbols[Math.floor(Math.random() * symbols.length)];
-            
-            // Adding animation effect
+
+            // Animation effect
             document.getElementById("reel1").style.transform = 'rotateX(360deg)';
             document.getElementById("reel2").style.transform = 'rotateX(360deg)';
             document.getElementById("reel3").style.transform = 'rotateX(360deg)';
@@ -181,12 +197,12 @@
                 document.getElementById("reel1").textContent = reel1Symbol;
                 document.getElementById("reel2").textContent = reel2Symbol;
                 document.getElementById("reel3").textContent = reel3Symbol;
-                
+
                 let winMessage = document.getElementById("winMessage");
                 let prize = 0;
-                
+
                 if (reel1Symbol === reel2Symbol && reel2Symbol === reel3Symbol) {
-                    switch(reel1Symbol) {
+                    switch (reel1Symbol) {
                         case '🍒':
                             prize = 10;
                             break;
@@ -209,7 +225,7 @@
                             prize = 500;
                             break;
                     }
-                    
+
                     totalCoins += prize;
                     winMessage.textContent = `You won ${prize} Coins!`;
                     winHistory.push({ symbol: reel1Symbol, prize: prize });
@@ -219,36 +235,17 @@
                     winMessage.textContent = 'No Win';
                 }
 
-                // Call handleClick to check click count
-                handleClick();
+                handleClick(); // Call handleClick to check click count
             }, 1000); // Wait for 1 second before showing the results
         }
 
         function handleClick() {
-            const currentTime = Date.now();
-
-            // Check if 12 hours have passed since the last reset
-            if (currentTime - lastReset >= resetTime) {
-                clickCount = 0; // Reset the counter
-                lastReset = currentTime; // Update the last reset time
-                localStorage.setItem('lastReset', lastReset);
-            }
-
-            // Check if the click count has reached the maximum
             if (clickCount < maxClicks) {
                 clickCount++;
                 document.getElementById("clickCountDisplay").textContent = `Clicks: ${clickCount}`;
             } else {
-                // Disable spin button only if total coins are greater than 0
-                if (totalCoins > 0) {
-                    document.getElementById("spinButton").disabled = true;
-                    // Set the message in HTML
-                    const messageDiv = document.getElementById("maxClickMessage");
-                    messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to @Markuk2021 on Telegram`;
-                } else {
-                    // Allow refresh if total coins are 0
-                    document.getElementById("maxClickMessage").textContent = "You can refresh the page since you did'nt win any coins.";
-                }
+                document.getElementById("spinButton").disabled = true; // Disable the spin button
+                document.getElementById("maxClickMessage").textContent = `You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`;
             }
         }
 
@@ -272,28 +269,6 @@
                 winHistoryBody.appendChild(row);
             });
         }
-
-        // Prevent page refresh
-        window.addEventListener('beforeunload', function (e) {
-            e.preventDefault();
-            e.returnValue = ''; // Display a prompt
-        });
-
-        function goFullscreen() {
-            const element = document.documentElement;
-            if (element.requestFullscreen) {
-                element.requestFullscreen();
-            } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            } else if (element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();
-            } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            }
-        }
-
-        // Call this function when the user starts the game
-        document.getElementById("spinButton").addEventListener('click', goFullscreen);
     </script>
 </body>
 </html>

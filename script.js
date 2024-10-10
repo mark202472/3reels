@@ -1,4 +1,4 @@
-const symbols = ["🍒", "🍋", "🍉", "⭐", "🦙"]; // Already includes "Paca"
+const symbols = ["🍒", "🍋", "🍉", "⭐", "🦙"]; // Slot symbols
 
 let totalCoins = 0; // Track total coins won
 let clickCount = 0;
@@ -79,8 +79,6 @@ function resetClickCountIfNeeded() {
 }
 
 function handleClick() {
-    const currentTime = Date.now();
-
     resetClickCountIfNeeded();
 
     if (clickCount < maxClicks) {
@@ -95,7 +93,7 @@ function handleClick() {
             messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to Mark on Telegram: @Markuk2021`;
             alert(`You've reached the maximum click limit. Please take a screenshot and send to Mark on Telegram: @Markuk2021`);
         } else {
-            document.getElementById("maxClickMessage").textContent = "You can refresh the page since you didnt not win any coins.";
+            document.getElementById("maxClickMessage").textContent = "You can refresh the page since you did not win any coins.";
         }
     }
 }
@@ -106,34 +104,7 @@ window.onload = function() {
     resetClickCountIfNeeded();
 }
 
-window.addEventListener('beforeunload', function (e) {
-    e.preventDefault();
-    e.returnValue = ''; // Display a prompt to the user
-});
-
-function goFullscreen() {
-    const element = document.documentElement; 
-    if (element.requestFullscreen) {
-        element.requestFullscreen();
-    } else if (element.mozRequestFullScreen) {
-        element.mozRequestFullScreen();
-    } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
-    } else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen();
-    }
-}
-
-goFullscreen();
-
-document.addEventListener('keydown', function (e) {
-    if (e.ctrlKey && (e.key === 'r' || e.key === 'R')) { 
-        e.preventDefault(); 
-    }
-    if (e.key === 'F5') { 
-        e.preventDefault(); 
-    }
-    // Prevent keyboard-based refresh (F5, Ctrl+R, Cmd+R)
+// Prevent keyboard-based refresh (F5, Ctrl+R, Cmd+R)
 document.addEventListener('keydown', function (e) {
     if (e.key === 'F5' || (e.ctrlKey && e.key === 'r') || (e.metaKey && e.key === 'r')) {
         e.preventDefault(); // Prevent the default refresh behavior
@@ -154,4 +125,18 @@ document.addEventListener('contextmenu', function (e) {
     alert("Right-click is disabled. Please don't try to refresh.");
 });
 
-});
+// Fullscreen function to enhance user experience
+function goFullscreen() {
+    const element = document.documentElement; 
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    }
+}
+
+goFullscreen();

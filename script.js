@@ -8,7 +8,7 @@ let lastReset = localStorage.getItem('lastReset') ? parseInt(localStorage.getIte
 
 function spin() {
     const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
-    const results = []; // Array to store results
+    const results = [];
 
     reels.forEach(reel => {
         const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
@@ -17,14 +17,13 @@ function spin() {
         reel.style.animation = 'spin 0.5s'; // Set animation
     });
 
-    console.log("Results: ", results); // Debugging line
+    console.log("Results: ", results);
 
     // Check for winnings
     if (results[0] === results[1] && results[1] === results[2]) {
         const winningSymbol = results[0];
         let prize = 0;
 
-        // Determine prize based on the symbol
         switch (winningSymbol) {
             case '🍒': prize = 10; break;
             case '🍋': prize = 20; break;
@@ -33,46 +32,43 @@ function spin() {
             case '🦙': prize = 500; break;
         }
 
-        totalCoins += prize; // Add the prize to total coins
-        updateTotalCoinsDisplay(); // Update visual display of total coins
-        console.log("Winning: ", { symbol: winningSymbol, prize: prize }); // Debugging line
+        totalCoins += prize;
+        updateTotalCoinsDisplay();
+        console.log("Winning: ", { symbol: winningSymbol, prize: prize });
         displayWinnings([{ symbol: winningSymbol, prize: prize }]);
         document.getElementById('winSound').play(); // Play win sound if there's a win
     } else {
-        console.log("No winnings this time!"); // Debugging line
+        console.log("No winnings this time!");
     }
 
     // Reset animation after it finishes
     setTimeout(() => {
         reels.forEach(reel => {
-            reel.style.animation = 'none'; // Reset the animation
+            reel.style.animation = 'none';
         });
-    }, 500); // Match this with the duration of the spin
+    }, 500); 
 }
 
 function displayWinnings(winnings) {
     const winningsTable = document.getElementById('winningsTable');
 
     winnings.forEach(winning => {
-        const newRow = winningsTable.insertRow(); // Insert a new row
-        const cell1 = newRow.insertCell(0); // Create first cell for symbol
-        const cell2 = newRow.insertCell(1); // Create second cell for prize
-        cell1.textContent = winning.symbol; // Set the symbol
-        cell2.textContent = winning.prize; // Set the prize
+        const newRow = winningsTable.insertRow();
+        const cell1 = newRow.insertCell(0);
+        const cell2 = newRow.insertCell(1);
+        cell1.textContent = winning.symbol;
+        cell2.textContent = winning.prize;
     });
 }
 
-// Function to update the visual display of total coins
 function updateTotalCoinsDisplay() {
     const totalCoinsDisplay = document.getElementById('totalCoinsDisplay');
     totalCoinsDisplay.textContent = `Total Coins Won: ${totalCoins}`;
 }
 
-// Sound and click limit handling
 function resetClickCountIfNeeded() {
     const currentTime = Date.now();
     
-    // Check if 12 hours have passed since the last reset
     if (currentTime - lastReset >= resetTime) {
         clickCount = 0; // Reset the counter
         lastReset = currentTime; // Update the last reset time
@@ -83,150 +79,58 @@ function resetClickCountIfNeeded() {
 }
 
 function handleClick() {
-    resetClickCountIfNeeded(); // Ensure click count is reset if needed
+    const currentTime = Date.now();
 
-    // Check if the click count has reached the maximum
+    resetClickCountIfNeeded();
+
     if (clickCount < maxClicks) {
         clickCount++;
-        console.log(`Click count: ${clickCount}`);
+        document.getElementById('clickCountDisplay').textContent = `Clicks: ${clickCount}`;
         document.getElementById('spinSound').play(); // Play spin sound
         spin(); // Execute spin logic
     } else {
-        // Display total coins won if max clicks reached
-        displayTotalCoins();
-        console.log("You've reached the maximum click limit.");
-        // Optionally, update UI to inform the user
-    }
-}
-
-// Function to display total coins won after 50 clicks
-function displayTotalCoins() {
-    // Visually display the total coins
-    const totalCoinsDisplay = document.getElementById('totalCoinsDisplay');
-    totalCoinsDisplay.textContent = `Total Coins Won: ${totalCoins}`;
-
-    console.log(`Total coins won: ${totalCoins}`);
-    alert(`You've reached the maximum click limit. Total coins won: ${totalCoins}`);
-}
-
-document.getElementById('yourClickableElementId').addEventListener('click', handleClick);
-
-window.onload = function() {
-    resetClickCountIfNeeded(); // Ensure click count is reset on load
-};
-function handleClick() {
-    const currentTime = Date.now();
-
-    // Check if 12 hours have passed since the last reset
-    if (currentTime - lastReset >= resetTime) {
-        clickCount = 0; // Reset the counter
-        lastReset = currentTime; // Update the last reset time
-        localStorage.setItem('lastReset', lastReset);
-    }
-
-    function handleClick() {
-        const currentTime = Date.now();
-    
-        // Check if 12 hours have passed since the last reset
-        if (currentTime - lastReset >= resetTime) {
-            clickCount = 0; // Reset the counter
-            lastReset = currentTime; // Update the last reset time
-            localStorage.setItem('lastReset', lastReset);
-        }
-    
-        // Check if the click count has reached the maximum
-        if (clickCount < maxClicks) {
-            clickCount++;
-            document.getElementById("clickCountDisplay").textContent = `Clicks: ${clickCount}`;
-        } else {
-            // Display the message in the HTML
-            const messageDiv = document.getElementById("maxClickMessage");
-            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to mark on telegram: @Markuk2021`;
-    
-            alert(`You've reached the maximum click limit. Please take a screenshot and send to mark on telegram: @Markuk2021`);
-            document.querySelector('.spin-button').disabled = true; // Disable the spin button after max clicks
-        }
-    }
-    function handleClick() {
-        const currentTime = Date.now();
-    
-        // Check if 12 hours have passed since the last reset
-        if (currentTime - lastReset >= resetTime) {
-            clickCount = 0; // Reset the counter
-            lastReset = currentTime; // Update the last reset time
-            localStorage.setItem('lastReset', lastReset);
-        }
-    
-        // Check if the click count has reached the maximum
-        if (clickCount < maxClicks) {
-            clickCount++;
-            document.getElementById("clickCountDisplay").textContent = `Clicks: ${clickCount}`;
-        } else {
-            // Set the message in HTML
-            const messageDiv = document.getElementById("maxClickMessage");
-            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to mark on telegram: @Markuk2021`;
-    
-            // Show the alert
-            alert(`You've reached the maximum click limit. Please take a screenshot and send to mark on telegram: @Markuk2021`);
-    
-            // Optionally disable the spin button
-            document.querySelector('.spin-button').disabled = true;
-        }
-    }
-    
-    
-}
-window.addEventListener('beforeunload', function (e) {
-    e.preventDefault(); // Prevents the default action of refreshing the page
-    e.returnValue = ''; // Display a prompt to the user
-});
-function goFullscreen() {
-    const element = document.documentElement; // Target the entire document
-    if (element.requestFullscreen) {
-        element.requestFullscreen();
-    } else if (element.mozRequestFullScreen) { // Firefox
-        element.mozRequestFullScreen();
-    } else if (element.webkitRequestFullscreen) { // Chrome, Safari, and Opera
-        element.webkitRequestFullscreen();
-    } else if (element.msRequestFullscreen) { // IE/Edge
-        element.msRequestFullscreen();
-    }
-}
-
-// Call this function when the user starts the game
-goFullscreen();
-document.addEventListener('keydown', function (e) {
-    if (e.ctrlKey && (e.key === 'r' || e.key === 'R')) { // Ctrl + R
-        e.preventDefault(); // Prevents the refresh
-    }
-    if (e.key === 'F5') { // F5 key
-        e.preventDefault(); // Prevents the refresh
-    }
-});
-function handleClick() {
-    const currentTime = Date.now();
-
-    // Check if 12 hours have passed since the last reset
-    if (currentTime - lastReset >= resetTime) {
-        clickCount = 0; // Reset the counter
-        lastReset = currentTime; // Update the last reset time
-        localStorage.setItem('lastReset', lastReset);
-    }
-
-    // Check if the click count has reached the maximum
-    if (clickCount < maxClicks) {
-        clickCount++;
-        document.getElementById("clickCountDisplay").textContent = `Clicks: ${clickCount}`;
-    } else {
-        // Disable spin button only if total coins are greater than 0
         if (totalCoins > 0) {
-            document.getElementById("spinButton").disabled = true;
-            // Set the message in HTML
+            document.getElementById("spinButton").disabled = true; // Disable the spin button after max clicks
             const messageDiv = document.getElementById("maxClickMessage");
-            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to mark on telegram: @Markuk2021`;
+            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to Mark on Telegram: @Markuk2021`;
+            alert(`You've reached the maximum click limit. Please take a screenshot and send to Mark on Telegram: @Markuk2021`);
         } else {
-            // Allow refresh if total coins are 0
             document.getElementById("maxClickMessage").textContent = "You can refresh the page since you have no coins.";
         }
     }
 }
+
+document.getElementById('spinButton').addEventListener('click', handleClick);
+
+window.onload = function() {
+    resetClickCountIfNeeded();
+}
+
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault();
+    e.returnValue = ''; // Display a prompt to the user
+});
+
+function goFullscreen() {
+    const element = document.documentElement; 
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    }
+}
+
+goFullscreen();
+
+document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && (e.key === 'r' || e.key === 'R')) { 
+        e.preventDefault(); 
+    }
+    if (e.key === 'F5') { 
+        e.preventDefault(); 
+    }
+});

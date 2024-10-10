@@ -141,9 +141,9 @@ function handleClick() {
         } else {
             // Display the message in the HTML
             const messageDiv = document.getElementById("maxClickMessage");
-            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`;
+            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to mark on telegram: @Markuk2021`;
     
-            alert(`You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`);
+            alert(`You've reached the maximum click limit. Please take a screenshot and send to  mark on telegram: @Markuk2021`);
             document.querySelector('.spin-button').disabled = true; // Disable the spin button after max clicks
         }
     }
@@ -164,10 +164,10 @@ function handleClick() {
         } else {
             // Set the message in HTML
             const messageDiv = document.getElementById("maxClickMessage");
-            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`;
+            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to  mark on telegram: @Markuk2021`;
     
             // Show the alert
-            alert(`You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`);
+            alert(`You've reached the maximum click limit. Please take a screenshot and send to  mark on telegram: @Markuk2021`);
     
             // Optionally disable the spin button
             document.querySelector('.spin-button').disabled = true;
@@ -223,7 +223,7 @@ function handleClick() {
             document.getElementById("spinButton").disabled = true;
             // Set the message in HTML
             const messageDiv = document.getElementById("maxClickMessage");
-            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`;
+            messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to  mark on telegram: @Markuk2021`;
         } else {
             // Allow refresh if total coins are 0
             document.getElementById("maxClickMessage").textContent = "You can refresh the page since you have no coins.";

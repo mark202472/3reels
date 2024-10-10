@@ -13,7 +13,9 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-image: url('background.jpg'); /* Ensure this is the correct image file name */
+            background-size: cover; /* Adjusts the image to cover the entire body */
+            background-position: center; /* Centers the image */
         }
         .symbols-table {
             margin-bottom: 20px;
@@ -46,6 +48,7 @@
             font-size: 2em;
             border: 4px solid #000;
             background-color: #f4f4f4;
+            transition: transform 0.5s ease; /* Animation for spinning */
         }
         .spin-button {
             margin-left: 10px;
@@ -76,7 +79,7 @@
 </head>
 <body>
     <!-- Background Music -->
-    <audio id="backgroundMusic" src="httpsraw.githubusercontent.comyour-usernameslot-machine-assetsmainbackground-music.mp3.mp4" autoplay loop>
+    <audio id="backgroundMusic" src="https://your-usernameslot-machine-assetsmainbackground-music.mp3.mp4" autoplay loop>
         Your browser does not support the audio element.
     </audio>
     
@@ -103,8 +106,16 @@
             <td>100 Coins</td>
         </tr>
         <tr>
-            <td>Paca Grape</td>
+            <td>🍀 Lucky Clover</td>
             <td>200 Coins</td>
+        </tr>
+        <tr>
+            <td>💰 Jackpot</td>
+            <td>400 Coins</td>
+        </tr>
+        <tr>
+            <td>🦙 Paca</td>
+            <td>500 Coins</td>
         </tr>
     </table>
 
@@ -115,7 +126,7 @@
             <div class="reel" id="reel1">⭐</div>
             <div class="reel" id="reel2">🍋</div>
             <div class="reel" id="reel3">⭐</div>
-            <button class="spin-button" onclick="spin()">Spin</button>
+            <button class="spin-button" id="spinButton" onclick="spin()">Spin</button>
         </div>
 
         <!-- Win Box -->
@@ -141,6 +152,9 @@
 
         <!-- Click Counter -->
         <p id="clickCountDisplay">Clicks: 0</p>
+
+        <!-- Message Display -->
+        <div id="maxClickMessage" style="color: red; font-weight: bold;"></div>
     </div>
 
     <script>
@@ -153,51 +167,64 @@
         let lastReset = localStorage.getItem('lastReset') ? parseInt(localStorage.getItem('lastReset')) : 0;
 
         function spin() {
-            const symbols = ["🍒", "🍋", "🍉", "⭐", "Paca"];
+            const symbols = ["🍒", "🍋", "🍉", "⭐", "🍀", "💰", "🦙"];
             const reel1Symbol = symbols[Math.floor(Math.random() * symbols.length)];
             const reel2Symbol = symbols[Math.floor(Math.random() * symbols.length)];
             const reel3Symbol = symbols[Math.floor(Math.random() * symbols.length)];
             
-            document.getElementById("reel1").textContent = reel1Symbol;
-            document.getElementById("reel2").textContent = reel2Symbol;
-            document.getElementById("reel3").textContent = reel3Symbol;
+            // Adding animation effect
+            document.getElementById("reel1").style.transform = 'rotateX(360deg)';
+            document.getElementById("reel2").style.transform = 'rotateX(360deg)';
+            document.getElementById("reel3").style.transform = 'rotateX(360deg)';
 
-            let winMessage = document.getElementById("winMessage");
-            let prize = 0;
-            
-            if (reel1Symbol === reel2Symbol && reel2Symbol === reel3Symbol) {
-                switch(reel1Symbol) {
-                    case '🍒':
-                        prize = 10;
-                        break;
-                    case '🍋':
-                        prize = 20;
-                        break;
-                    case '🍉':
-                        prize = 50;
-                        break;
-                    case '⭐':
-                        prize = 100;
-                        break;
-                    case 'Paca':
-                        prize = 200;
-                        break;
+            setTimeout(() => {
+                document.getElementById("reel1").textContent = reel1Symbol;
+                document.getElementById("reel2").textContent = reel2Symbol;
+                document.getElementById("reel3").textContent = reel3Symbol;
+                
+                let winMessage = document.getElementById("winMessage");
+                let prize = 0;
+                
+                if (reel1Symbol === reel2Symbol && reel2Symbol === reel3Symbol) {
+                    switch(reel1Symbol) {
+                        case '🍒':
+                            prize = 10;
+                            break;
+                        case '🍋':
+                            prize = 20;
+                            break;
+                        case '🍉':
+                            prize = 50;
+                            break;
+                        case '⭐':
+                            prize = 100;
+                            break;
+                        case '🍀':
+                            prize = 200;
+                            break;
+                        case '💰':
+                            prize = 400;
+                            break;
+                        case '🦙':
+                            prize = 500;
+                            break;
+                    }
+                    
+                    totalCoins += prize;
+                    updateTotalCoinsDisplay();
+
+                    winMessage.textContent = `${reel1Symbol} - ${prize} Coins`;
+                    
+                    // Add win to history
+                    winHistory.push({ symbol: reel1Symbol, prize: prize });
+                    updateWinHistory();
+                } else {
+                    winMessage.textContent = 'No Win';
                 }
                 
-                totalCoins += prize;
-                updateTotalCoinsDisplay();
-
-                winMessage.textContent = `${reel1Symbol} - ${prize} Coins`;
-                
-                // Add win to history
-                winHistory.push({ symbol: reel1Symbol, prize: prize });
-                updateWinHistory();
-            } else {
-                winMessage.textContent = 'No Win';
-            }
-
-            // Increment click counter
-            handleClick();
+                // Increment click counter and check if max clicks reached
+                handleClick();
+            }, 500); // Wait for animation to finish before showing the result
         }
 
         function handleClick() {
@@ -215,7 +242,12 @@
                 clickCount++;
                 document.getElementById("clickCountDisplay").textContent = `Clicks: ${clickCount}`;
             } else {
-                alert(`You've reached the maximum click limit. Total coins won: ${totalCoins}`);
+                // Disable spin button
+                document.getElementById("spinButton").disabled = true;
+                
+                // Set the message in HTML
+                const messageDiv = document.getElementById("maxClickMessage");
+                messageDiv.textContent = `You've reached the maximum click limit. Please take a screenshot and send to the link: https://t.me/+7r62MHxy8lU2YWQ0`;
             }
         }
 
@@ -224,34 +256,21 @@
             document.getElementById("totalCoinsDisplay").textContent = `Total Coins Won: ${totalCoins}`;
         }
 
-        // Function to update win history table
+        // Function to update win history display
         function updateWinHistory() {
             const winHistoryBody = document.getElementById("winHistoryBody");
-            winHistoryBody.innerHTML = ""; // Clear current history
-            
-            winHistory.forEach((win) => {
+            winHistoryBody.innerHTML = ''; // Clear previous history
+            winHistory.forEach(entry => {
                 const row = document.createElement("tr");
                 const symbolCell = document.createElement("td");
-                symbolCell.textContent = win.symbol;
                 const prizeCell = document.createElement("td");
-                prizeCell.textContent = `${win.prize} Coins`;
-                
+                symbolCell.textContent = entry.symbol;
+                prizeCell.textContent = entry.prize;
                 row.appendChild(symbolCell);
                 row.appendChild(prizeCell);
                 winHistoryBody.appendChild(row);
             });
         }
-
-        // On page load, check for the reset condition
-        window.onload = function() {
-            const currentTime = Date.now();
-            
-            if (currentTime - lastReset >= resetTime) {
-                clickCount = 0; // Reset the counter
-                lastReset = currentTime; // Update the last reset time
-                localStorage.setItem('lastReset', lastReset);
-            }
-        };
     </script>
 </body>
 </html>
